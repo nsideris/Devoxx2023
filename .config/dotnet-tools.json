@@ -7,6 +7,12 @@
       "commands": [
         "nuke"
       ]
+    },
+    "nbgv": {
+      "version": "3.5.119",
+      "commands": [
+        "nbgv"
+      ]
     }
   }
 }
