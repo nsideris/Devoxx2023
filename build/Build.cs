@@ -31,6 +31,7 @@ class Build : NukeBuild
     Target Restore => _ => _
         .Executes(() =>
         {
+            Logging.Level = LogLevel.Warning;
             DotNetTasks.DotNetClean(s => s.SetProject(Solution));
             DotNetTasks.DotNetRestore(s => s.SetProjectFile(Solution));
             DotNetTasks.DotNetToolRestore();
@@ -123,14 +124,14 @@ class Build : NukeBuild
                 .AddFilename($"{K8SYamlFiles}/deployment.yaml"));
         });
 
-    Target RunTests => _ => _
+    Target RunK6Tests => _ => _
         .DependsOn(DeployInactiveEnvironment)
         .Executes(() =>
         {
             //K6 Tests
         });
 
-    Target SwitchRouting => _ => _.DependsOn(RunTests).Executes(() =>
+    Target SwitchRouting => _ => _.DependsOn(RunK6Tests).Executes(() =>
     {
         var replaceDict = new Dictionary<string, string>
         {
@@ -148,7 +149,6 @@ class Build : NukeBuild
 
     Target BlueGreenDeploy => _ => _.DependsOn(SwitchRouting).Executes(() =>
     {
-        Logging.Level = LogLevel.Warning;
     });
 }
 

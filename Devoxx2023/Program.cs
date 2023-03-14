@@ -1,7 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
@@ -19,10 +17,30 @@ app.UseCors(builder => builder
 );
 
 app.MapGet("/GetEnvironment", () => $"You are in Environment: {Environment.GetEnvironmentVariable("Role")}")
-    .WithName("GetWeatherForecast")
     .WithOpenApi();
+
+app.MapPost("/ApplicationState", (ApplicationState? applicationState) =>
+{
+    if (applicationState is {Status: ApplicationStatus.Inactive})
+    {
+        //UnRegister any background jobs/Subscriptions
+    }
+}).WithOpenApi();
+
 
 app.Run();
 
 
- 
+public class ApplicationState
+{
+    /// <summary>
+    /// Status of the application.
+    /// </summary>
+    public ApplicationStatus Status { get; set; }
+}
+
+public enum ApplicationStatus
+{
+    Active,
+    Inactive
+}
