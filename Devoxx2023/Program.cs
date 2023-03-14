@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Runtime;
 using Devoxx2023;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
