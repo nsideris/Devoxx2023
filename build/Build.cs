@@ -109,7 +109,7 @@ class Build : NukeBuild
             var replaceDict = new Dictionary<string, string>
             {
                 {"TARGET_ROLE", ProductionCandidateEnvironment.ToString().ToLower()},
-                {"VERSION", NerdbankVersioning.SemVer1}
+                {"VERSION", NerdbankVersioning.SemVer2}
             };
 
             //Replace Text
