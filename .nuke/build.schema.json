@@ -10,6 +10,10 @@
           "type": "string",
           "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
+        "AzureServiceBus": {
+          "type": "string",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
         "AzureSubscription": {
           "type": "string",
           "default": "Secrets must be entered via 'nuke :secrets [profile]'"

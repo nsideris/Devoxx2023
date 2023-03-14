@@ -18,7 +18,7 @@ class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.BlueGreenDeploy);
 
- 
+
     [Solution] readonly Solution Solution;
 
     [NerdbankGitVersioning] readonly NerdbankGitVersioning NerdbankVersioning;
@@ -28,6 +28,8 @@ class Build : NukeBuild
     [Parameter] [Secret] readonly string AzurePassword;
     [Parameter] [Secret] readonly string AzureTenantId;
     [Parameter] [Secret] readonly string AzureSubscription;
+    [Parameter] [Secret] readonly string AzureServiceBus;
+
 
     Target Restore => _ => _
         .Executes(() =>
@@ -109,7 +111,8 @@ class Build : NukeBuild
             var replaceDict = new Dictionary<string, string>
             {
                 {"TARGET_ROLE", ProductionCandidateEnvironment.ToString().ToLower()},
-                {"VERSION", NerdbankVersioning.NuGetPackageVersion}
+                {"VERSION", NerdbankVersioning.NuGetPackageVersion},
+                {"SBCS", AzureServiceBus}
             };
 
             //Replace Text

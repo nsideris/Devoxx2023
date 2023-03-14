@@ -56,6 +56,8 @@ spec:
         env:
             - name: Role
               value: ${TARGET_ROLE}
+            - name: ServiceBus__ConnectionString
+              value: ${SBCS}
         resources:
           limits:
             cpu: 500m
