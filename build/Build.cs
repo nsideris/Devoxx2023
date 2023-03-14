@@ -11,6 +11,7 @@ using Nuke.Common.Tools.Docker;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Kubernetes;
 using Nuke.Common.Tools.NerdbankGitVersioning;
+using Serilog;
 using LogLevel = Nuke.Common.LogLevel;
 
 class Build : NukeBuild
@@ -31,7 +32,7 @@ class Build : NukeBuild
     Target Restore => _ => _
         .Executes(() =>
         {
-            Logging.Level = LogLevel.Warning;
+            Logging.Level = LogLevel.Normal;
             DotNetTasks.DotNetClean(s => s.SetProject(Solution));
             DotNetTasks.DotNetRestore(s => s.SetProjectFile(Solution));
             DotNetTasks.DotNetToolRestore();
@@ -55,7 +56,6 @@ class Build : NukeBuild
                     .SetProject(Solution)
                     .SetRuntime("linux-x64")
                     .SetPublishProfile("DefaultContainer")
-                    .SetVersion(NerdbankVersioning.SimpleVersion)
             );
             DockerTagName = dotNetPublish.Last().Text.Split("'")[1];
         });
@@ -67,6 +67,7 @@ class Build : NukeBuild
             DockerTasks.DockerLogin(s => s.SetUsername("9412036").SetPassword(DockerPassword));
             DockerTasks.DockerTag(s => s.SetSourceImage(DockerTagName).SetTargetImage($"9412036/{DockerTagName}"));
             DockerTasks.DockerPush(s => s.SetName($"9412036/{DockerTagName}"));
+            Log.Information($"Pushed Docker Image {DockerTagName}");
         });
 
 
@@ -101,11 +102,14 @@ class Build : NukeBuild
                 ?.Split('=').Last().ToDeploymentEnvironment();
             ProductionCandidateEnvironment = activeEnvironment.Value.GetOppositeEnvironment();
 
+            Log.Information(
+                $"Active Environment is {activeEnvironment} will try deploy to {ProductionCandidateEnvironment}");
+
             //Deploy Service Test
             var replaceDict = new Dictionary<string, string>
             {
                 {"TARGET_ROLE", ProductionCandidateEnvironment.ToString().ToLower()},
-                {"VERSION", NerdbankVersioning.SimpleVersion}
+                {"VERSION", NerdbankVersioning.SemVer1}
             };
 
             //Replace Text
@@ -145,6 +149,9 @@ class Build : NukeBuild
         //Deploy
         KubernetesTasks.KubernetesApply(s => s
             .AddFilename($"{K8SYamlFiles}/service.yaml"));
+
+        Log.Information(
+            $"Active Environment is {ProductionCandidateEnvironment}");
     });
 
     Target BlueGreenDeploy => _ => _.DependsOn(SwitchRouting).Executes(() =>

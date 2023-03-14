@@ -91,7 +91,7 @@
               "LoginAzurePrincipal",
               "PushDockerImage",
               "Restore",
-              "RunTests",
+              "RunK6Tests",
               "SwitchRouting"
             ]
           }
@@ -113,7 +113,7 @@
               "LoginAzurePrincipal",
               "PushDockerImage",
               "Restore",
-              "RunTests",
+              "RunK6Tests",
               "SwitchRouting"
             ]
           }
