@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: poolswebapi-ingress-service
+    namespace: pools
+    annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/redirect-to-https: "true"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "1800"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+        nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "1"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+        nginx.ingress.kubernetes.io/cors-allow-origin: ${CORS-ALLOW-ORIGIN}
+        nginx.ingress.kubernetes.io/enable-cors: 'true'
+spec:
+    tls:
+        - hosts:
+            - poolswebapi${INGRESS_HOST}.signalocean.com
+          secretName: tls-signalocean
+    rules:
+         - host: poolswebapi${INGRESS_HOST}.signalocean.com
+           http:
+            paths:
+                - pathType: Prefix
+                  path: /
+                  backend:
+                     service:
+                         name: poolswebapi-service
+                         port:
+                             number: 80

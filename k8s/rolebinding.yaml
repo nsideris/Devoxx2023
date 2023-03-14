@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: pools
+  name: shawarma-endpoints-reader
+rules:
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: shawarma-rolebinding
+  namespace: pools
+subjects:
+- kind: ServiceAccount
+  name: shawarma-service-account
+  namespace: pools
+roleRef:
+  kind: Role
+  name: shawarma-endpoints-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shawarma-service-account
+  namespace: pools

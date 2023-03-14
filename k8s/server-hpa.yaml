@@ -1,0 +1,31 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: poolswebapi-deployment-hpa
+  namespace: pools
+  labels:
+    app: poolswebapi
+    team: pools
+spec:
+  minReplicas: ${REPLICAS}
+  maxReplicas: ${MAX_REPLICAS}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: poolswebapi-deployment-${TARGET_ROLE}
+  metrics:
+    - type: Resource
+      resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
+    - type: Resource
+      resource:
+          name: memory
+          target:
+            type: Utilization
+            averageUtilization: 50
+  behavior:
+    scaleDown: 
+      stabilizationWindowSeconds: 50 

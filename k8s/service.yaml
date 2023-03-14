@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devoxx2023-service
+  namespace: pools
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    external-dns.alpha.kubernetes.io/hostname: "devoxx2023.dev.k8s.signalocean.com"
+  labels:
+    app: devoxx2023
+spec:
+  type: LoadBalancer
+  ports:
+  - name: web
+    port: 80
+    targetPort: 80
+  selector:
+    app: devoxx2023
+    role: ${TARGET_ROLE}

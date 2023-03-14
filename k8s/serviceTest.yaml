@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devoxx2023-service-test
+  namespace: pools
+  labels:
+    app: devoxx2023
+spec:
+  type: LoadBalancer
+  ports:
+  - name: web
+    port: 80
+    targetPort: 80
+  selector:
+    app: devoxx2023
+    role: ${TARGET_ROLE}
