@@ -10,6 +10,7 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Docker;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Kubernetes;
+using Nuke.Common.Tools.NerdbankGitVersioning;
 using LogLevel = Nuke.Common.LogLevel;
 
 class Build : NukeBuild
@@ -19,7 +20,7 @@ class Build : NukeBuild
  
     [Solution] readonly Solution Solution;
 
-    string Version = "1.0.6";
+    [NerdbankGitVersioning] readonly NerdbankGitVersioning NerdbankVersioning;
 
     [Parameter] [Secret] readonly string DockerPassword;
     [Parameter] [Secret] readonly string AzureUserName;
@@ -53,7 +54,7 @@ class Build : NukeBuild
                     .SetProject(Solution)
                     .SetRuntime("linux-x64")
                     .SetPublishProfile("DefaultContainer")
-                    .SetVersion(Version)
+                    .SetVersion(NerdbankVersioning.SimpleVersion)
             );
             DockerTagName = dotNetPublish.Last().Text.Split("'")[1];
         });
@@ -103,7 +104,7 @@ class Build : NukeBuild
             var replaceDict = new Dictionary<string, string>
             {
                 {"TARGET_ROLE", ProductionCandidateEnvironment.ToString().ToLower()},
-                {"VERSION", Version}
+                {"VERSION", NerdbankVersioning.SimpleVersion}
             };
 
             //Replace Text
