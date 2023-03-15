@@ -4,7 +4,14 @@ using Microsoft.Extensions.Options;
 
 namespace Devoxx2023;
 
-public class WorkerServiceBus : IHostedService, IAsyncDisposable
+public interface IWorkerServiceBus
+{
+    Task StartAsync(CancellationToken cancellationToken);
+    Task StopAsync(CancellationToken cancellationToken);
+    int GetReceivedMessages();
+}
+
+public class WorkerServiceBus : IWorkerServiceBus, IAsyncDisposable
 {
     private readonly string _connectionString;
 
@@ -13,7 +20,7 @@ public class WorkerServiceBus : IHostedService, IAsyncDisposable
         _connectionString = serviceBusOptions.Value.ConnectionString;
     }
 
-    public int ReceivedCount = 0;
+    private int ReceivedCount = 0;
 
     // the client that owns the connection and can be used to create senders and receivers
     private ServiceBusClient _client = null!;
@@ -52,6 +59,11 @@ public class WorkerServiceBus : IHostedService, IAsyncDisposable
             await _processor.DisposeAsync();
             await _client.DisposeAsync();
         }
+    }
+
+    public int GetReceivedMessages()
+    {
+        return ReceivedCount;
     }
 
     async Task MessageHandler(ProcessMessageEventArgs args)

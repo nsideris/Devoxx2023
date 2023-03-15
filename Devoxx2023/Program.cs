@@ -1,7 +1,8 @@
 using Devoxx2023;
 using Serilog;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddSerilog();
@@ -15,12 +16,13 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 {
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-builder.Services.Configure<JsonOptions>(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(o =>
+    o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-builder.Services.AddHostedService<WorkerServiceBus>();
+builder.Services.TryAddSingleton<IWorkerServiceBus, WorkerServiceBus>();
 var app = builder.Build();
 
-ApplicationStatus? ServiceBusStatus = null;
+ApplicationStatus ServiceBusStatus = ApplicationStatus.Inactive;
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -35,27 +37,23 @@ app.MapGet("/GetEnvironment", () => $"You are in Environment: {Environment.GetEn
     .WithOpenApi();
 
 app.MapGet("/ServiceBusCount", (
-    IEnumerable<IHostedService> hostedServices) =>
-{
-    var serviceBus = (WorkerServiceBus) hostedServices.Single(x => x.GetType() == typeof(WorkerServiceBus));
-    return $"{ServiceBusStatus} Count:{serviceBus.ReceivedCount}";
-});
+        [FromServices] IWorkerServiceBus serviceBusWorker) =>
+    $"{ServiceBusStatus} Count:{serviceBusWorker.GetReceivedMessages()}");
 
 app.MapPost("/ApplicationState",
-    async (ApplicationState? applicationState, CancellationToken ct, IEnumerable<IHostedService> hostedServices,
+    async (ApplicationState? applicationState, CancellationToken ct, [FromServices] IWorkerServiceBus serviceBusWorker,
         ILoggerFactory loggerFactory) =>
     {
         var logger = loggerFactory.CreateLogger("ApplicationState");
 
         logger.LogInformation($"Status is {applicationState.Status}");
-        var serviceBus = (WorkerServiceBus) hostedServices.Single(x => x.GetType() == typeof(WorkerServiceBus));
         if (applicationState is {Status: ApplicationStatus.Inactive})
         {
-            await serviceBus.StopAsync(ct);
+            await serviceBusWorker.StopAsync(ct);
         }
         else if (applicationState is {Status: ApplicationStatus.Active})
         {
-            await serviceBus.StartAsync(ct);
+            await serviceBusWorker.StartAsync(ct);
         }
 
         ServiceBusStatus = applicationState.Status;
