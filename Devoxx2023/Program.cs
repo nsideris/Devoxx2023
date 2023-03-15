@@ -51,10 +51,10 @@ app.MapPost("/ApplicationState",
         {
             await serviceBus.StopAsync(ct);
         }
-        //else if (applicationState is {Status: ApplicationStatus.Active})
-        //{
-        //    await serviceBus.StartAsync(ct);
-        //}
+        else if (applicationState is {Status: ApplicationStatus.Active})
+        {
+            await serviceBus.StartAsync(ct);
+        }
     }).WithOpenApi();
 
 
