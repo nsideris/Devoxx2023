@@ -1,7 +1,8 @@
 using Devoxx2023;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.AddSerilog();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
@@ -32,8 +33,11 @@ app.MapGet("/ServiceBusCount", (
 });
 
 app.MapPost("/ApplicationState",
-    async (ApplicationState? applicationState, CancellationToken ct, IEnumerable<IHostedService> hostedServices) =>
+    async (ApplicationState? applicationState, CancellationToken ct, IEnumerable<IHostedService> hostedServices,
+        ILoggerFactory loggerFactory) =>
     {
+        var logger = loggerFactory.CreateLogger("ApplicationState");
+        logger.LogInformation($"Status is {applicationState.Status}");
         var serviceBus = (WorkerServiceBus) hostedServices.Single(x => x.GetType() == typeof(WorkerServiceBus));
         if (applicationState is {Status: ApplicationStatus.Inactive})
         {
