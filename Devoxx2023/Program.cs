@@ -1,5 +1,4 @@
 using Devoxx2023;
-using Serilog;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
