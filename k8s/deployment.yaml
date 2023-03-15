@@ -10,7 +10,7 @@ metadata:
     version: ${VERSION}
     role: ${TARGET_ROLE}
 spec:
-  replicas: 2
+  replicas: 1
   progressDeadlineSeconds: 240
   selector:
     matchLabels:
