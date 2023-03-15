@@ -254,5 +254,3 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
-
-src/TCECalculatorService.Api/TCECalculatorService.Api.xml

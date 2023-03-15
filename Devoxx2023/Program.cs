@@ -37,8 +37,13 @@ app.MapGet("/GetEnvironment", () => $"You are in Environment: {Environment.GetEn
     .WithOpenApi();
 
 app.MapGet("/ServiceBusCount", (
-        [FromServices] IWorkerServiceBus serviceBusWorker) =>
-    $"{ServiceBusStatus} Count:{serviceBusWorker.GetReceivedMessages()}");
+    [FromServices] IWorkerServiceBus serviceBusWorker) => TypedResults.Ok(new
+{
+    Status = ServiceBusStatus,
+    Environment = Environment.GetEnvironmentVariable("Role"),
+    QueueMessagesProccessed = serviceBusWorker.GetReceivedMessages()
+}));
+
 
 app.MapPost("/ApplicationState",
     async (ApplicationState? applicationState, CancellationToken ct, [FromServices] IWorkerServiceBus serviceBusWorker,
