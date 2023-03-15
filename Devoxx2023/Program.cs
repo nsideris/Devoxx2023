@@ -20,6 +20,8 @@ builder.Services.Configure<JsonOptions>(o => o.SerializerOptions.Converters.Add(
 builder.Services.AddHostedService<WorkerServiceBus>();
 var app = builder.Build();
 
+ApplicationStatus? ServiceBusStatus = null;
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -36,7 +38,7 @@ app.MapGet("/ServiceBusCount", (
     IEnumerable<IHostedService> hostedServices) =>
 {
     var serviceBus = (WorkerServiceBus) hostedServices.Single(x => x.GetType() == typeof(WorkerServiceBus));
-    return $"{serviceBus.ReceivedCount}";
+    return $"{ServiceBusStatus} Count:{serviceBus.ReceivedCount}";
 });
 
 app.MapPost("/ApplicationState",
@@ -55,6 +57,8 @@ app.MapPost("/ApplicationState",
         {
             await serviceBus.StartAsync(ct);
         }
+
+        ServiceBusStatus = applicationState.Status;
     }).WithOpenApi();
 
 
