@@ -1,5 +1,7 @@
 using Devoxx2023;
 using Serilog;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddSerilog();
@@ -9,6 +11,11 @@ builder.Services.AddCors();
 builder.Services.Configure<ServiceBusOptions>(options =>
     options.ConnectionString = builder.Configuration["ServiceBus:ConnectionString"]);
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+builder.Services.Configure<JsonOptions>(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddHostedService<WorkerServiceBus>();
 var app = builder.Build();
@@ -37,6 +44,7 @@ app.MapPost("/ApplicationState",
         ILoggerFactory loggerFactory) =>
     {
         var logger = loggerFactory.CreateLogger("ApplicationState");
+
         logger.LogInformation($"Status is {applicationState.Status}");
         var serviceBus = (WorkerServiceBus) hostedServices.Single(x => x.GetType() == typeof(WorkerServiceBus));
         if (applicationState is {Status: ApplicationStatus.Inactive})
