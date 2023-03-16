@@ -9,6 +9,7 @@ public interface IWorkerServiceBus
     Task StartAsync(CancellationToken cancellationToken);
     Task StopAsync(CancellationToken cancellationToken);
     int GetReceivedMessages();
+    void ResetCount();
 }
 
 public class WorkerServiceBus : IWorkerServiceBus, IAsyncDisposable
@@ -64,6 +65,11 @@ public class WorkerServiceBus : IWorkerServiceBus, IAsyncDisposable
     public int GetReceivedMessages()
     {
         return ReceivedCount;
+    }
+
+    public void ResetCount()
+    {
+        ReceivedCount = 0;
     }
 
     async Task MessageHandler(ProcessMessageEventArgs args)

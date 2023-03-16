@@ -43,6 +43,11 @@ app.MapGet("/ServiceBusCount", (
     QueueMessagesProccessed = serviceBusWorker.GetReceivedMessages()
 }));
 
+app.MapPost("ResetCount", ([FromServices] IWorkerServiceBus serviceBusWorker) =>
+{
+    serviceBusWorker.ResetCount();
+    return "Count was reset";
+});
 
 app.MapPost("/ApplicationState",
     async (ApplicationState? applicationState, CancellationToken ct, [FromServices] IWorkerServiceBus serviceBusWorker,
