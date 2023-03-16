@@ -31,5 +31,12 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Compile'
-        run: ./build.cmd Compile
+      - name: Run './build.cmd BlueGreenDeploy'
+        run: ./build.cmd BlueGreenDeploy
+        env:
+          DockerPassword: ${{ secrets.DOCKER_PASSWORD }}
+          AzureUserName: ${{ secrets.AZURE_USER_NAME }}
+          AzurePassword: ${{ secrets.AZURE_PASSWORD }}
+          AzureTenantId: ${{ secrets.AZURE_TENANT_ID }}
+          AzureSubscription: ${{ secrets.AZURE_SUBSCRIPTION }}
+          AzureServiceBus: ${{ secrets.AZURE_SERVICE_BUS }}
