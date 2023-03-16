@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Nuke.Common;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Execution;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
@@ -14,12 +15,18 @@ using Nuke.Common.Tools.NerdbankGitVersioning;
 using Serilog;
 using LogLevel = Nuke.Common.LogLevel;
 
+[GitHubActions(
+    "continuous",
+    GitHubActionsImage.UbuntuLatest,
+    On = new[] {GitHubActionsTrigger.Push},
+    InvokedTargets = new[] {nameof(Compile)})]
 class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.BlueGreenDeploy);
 
 
-    [Solution] readonly Solution Solution;
+    [Solution]
+    readonly Solution Solution;
 
     [NerdbankGitVersioning] readonly NerdbankGitVersioning NerdbankVersioning;
 
