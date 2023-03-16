@@ -31,7 +31,7 @@ export default {
 				"http://devoxx2023.dev.k8s.signalocean.com/ServiceBusCount",{cache: 'no-cache'}
 			)
 				.then(async (res) => {
-					console.log(res);
+					console.log(await res.json);
 					var textValue = await res.json();
 					if (textValue.environment == "blue") {
 						blueEnv.value = textValue.queueMessagesProccessed;
@@ -46,7 +46,7 @@ export default {
 		}
 
 		onMounted(() => {
-			setInterval(() => fetchData(), 10000);
+			setInterval(() => fetchData(), 1000);
 		});
 
 		return {

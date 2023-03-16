@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{E88ED7FE-707B-4A67-B6E8-FF5D1C288FE7}"
 	ProjectSection(SolutionItems) = preProject
 		k8s\deployment.yaml = k8s\deployment.yaml
+		k8s\ingress-service.yaml = k8s\ingress-service.yaml
 		k8s\rolebinding.yaml = k8s\rolebinding.yaml
 		k8s\service.yaml = k8s\service.yaml
 		k8s\serviceTest.yaml = k8s\serviceTest.yaml

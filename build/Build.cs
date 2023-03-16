@@ -152,7 +152,8 @@ class Build : NukeBuild
         //Deploy
         KubernetesTasks.KubernetesApply(s => s
             .AddFilename($"{K8SYamlFiles}/service.yaml"));
-
+        KubernetesTasks.KubernetesApply(s => s
+            .AddFilename($"{K8SYamlFiles}/ingress-service.yaml"));
         Log.Information(
             $"Active Environment is {ProductionCandidateEnvironment}");
     });

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: poolswebapi-ingress-service
+    name: devoxx2023-ingress-service
     namespace: pools
     annotations:
         kubernetes.io/ingress.class: nginx
@@ -9,23 +9,24 @@ metadata:
         nginx.ingress.kubernetes.io/proxy-connect-timeout: "1800"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-        nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "1"
-        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
-        nginx.ingress.kubernetes.io/cors-allow-origin: ${CORS-ALLOW-ORIGIN}
-        nginx.ingress.kubernetes.io/enable-cors: 'true'
+        nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "1" 
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, PATCH, OPTIONS"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "false"
 spec:
     tls:
         - hosts:
-            - poolswebapi${INGRESS_HOST}.signalocean.com
+            - devoxx2023.dev.k8s.signalocean.com
           secretName: tls-signalocean
     rules:
-         - host: poolswebapi${INGRESS_HOST}.signalocean.com
+         - host: devoxx2023.dev.k8s.signalocean.com
            http:
             paths:
                 - pathType: Prefix
                   path: /
                   backend:
                      service:
-                         name: poolswebapi-service
+                         name: devoxx2023-service
                          port:
                              number: 80
