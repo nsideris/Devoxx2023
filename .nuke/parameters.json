@@ -1,10 +1,4 @@
 {
   "$schema": "./build.schema.json",
   "Solution": "Devoxx2023.sln",
-  "DockerPassword": "v1:srN7PsAuZAXgABktDQXwt0b4rGV1yWs1jkgsOu8ydCgP6crBilr4tkjh8ueQfzKm",
-  "AzurePassword": "v1:ZQAKEOQ2df4PuGJzlKjj8Vm7imrscIlgtS/hNjlifeV0Zlnkv326JMYmeVgm6FiI",
-  "AzureSubscription": "v1:6gTZE9wvCtl3m8iV2W8sWJegxip4knQ8yK2S0dndXwA=",
-  "AzureTenantId": "v1:J8fA5MtSbcM5E1x9Q4lWTZX9gseaWJAQXhMg9F+EKnId1LvqvvywY4wX9Urr4Fpy",
-  "AzureUserName": "v1:tjguhypA7yXjvziQG9aC+kavUepKrzl6IB/CWPYQJVXmmmhfOkKcv5ZYZmkHNXDa",
-  "AzureServiceBus": "v1:NbuhLHamppi2xZvNUdDATI6xT+1Cfc+u9nWta9Nvfxd8B54HeLyw3LpjeUUdYU+Ktnc2ASkIquCeOyUMl9FTU7+WFz05avwH2gU6sXeCOtdFX7l6KfsTxGeBSAUGBiNO1nR5iUjiRdo7Y/X12kDcXtMm4hMvvJtIjQRLz2hyc0C1UGFcBkhf+H/o/ulb8c8y9SUmKPCnQYB1tyBy9LXKWg=="
 }

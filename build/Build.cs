@@ -19,7 +19,9 @@ using LogLevel = Nuke.Common.LogLevel;
     "continuous",
     GitHubActionsImage.UbuntuLatest,
     On = new[] {GitHubActionsTrigger.Push},
-    InvokedTargets = new[] {nameof(Compile)})]
+    ImportSecrets = new[]
+        {"DockerPassword", "AzureUserName", "AzurePassword", "AzureTenantId", "AzureSubscription", "AzureServiceBus"},
+    InvokedTargets = new[] {nameof(BlueGreenDeploy)})]
 class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.BlueGreenDeploy);
@@ -29,13 +31,6 @@ class Build : NukeBuild
     readonly Solution Solution;
 
     [NerdbankGitVersioning] readonly NerdbankGitVersioning NerdbankVersioning;
-
-    [Parameter] [Secret] readonly string DockerPassword;
-    [Parameter] [Secret] readonly string AzureUserName;
-    [Parameter] [Secret] readonly string AzurePassword;
-    [Parameter] [Secret] readonly string AzureTenantId;
-    [Parameter] [Secret] readonly string AzureSubscription;
-    [Parameter] [Secret] readonly string AzureServiceBus;
 
 
     Target Restore => _ => _
@@ -73,7 +68,8 @@ class Build : NukeBuild
         .DependsOn(BuildDockerImage)
         .Executes(() =>
         {
-            DockerTasks.DockerLogin(s => s.SetUsername("9412036").SetPassword(DockerPassword));
+            DockerTasks.DockerLogin(s =>
+                s.SetUsername("9412036").SetPassword(Environment.GetEnvironmentVariable("DockerPassword")));
             DockerTasks.DockerTag(s => s.SetSourceImage(DockerTagName).SetTargetImage($"9412036/{DockerTagName}"));
             DockerTasks.DockerPush(s => s.SetName($"9412036/{DockerTagName}"));
             Log.Information($"Pushed Docker Image {DockerTagName}");
@@ -83,12 +79,12 @@ class Build : NukeBuild
     Target LoginAzurePrincipal => _ => _.DependsOn(PushDockerImage).Executes(() =>
     {
         ProcessTasks.StartProcess("az",
-                $"  login --service-principal -u \"{AzureUserName}\"  --password \"{AzurePassword}\"  --tenant \"{AzureTenantId}\" ")
+                $"  login --service-principal -u \"{Environment.GetEnvironmentVariable("AzureUserName")}\"  --password \"{Environment.GetEnvironmentVariable("AzurePassword")}\"  --tenant \"{Environment.GetEnvironmentVariable("AzureTenantId")}\" ")
             .WaitForExit();
         var cluster = "dev";
         var context = "dev";
         var command = "aks get-credentials --overwrite-existing --subscription ";
-        command += $"\"{AzureSubscription}\" ";
+        command += $"\"{Environment.GetEnvironmentVariable("AzureSubscription")}\" ";
         command += $" --resource-group k8s-{cluster} --name {context}  -a";
 
         ProcessTasks.StartProcess("az", command).WaitForExit();
@@ -119,7 +115,7 @@ class Build : NukeBuild
             {
                 {"TARGET_ROLE", ProductionCandidateEnvironment.ToString().ToLower()},
                 {"VERSION", NerdbankVersioning.NuGetPackageVersion},
-                {"SBCS", AzureServiceBus}
+                {"SBCS", Environment.GetEnvironmentVariable("AzureServiceBus")}
             };
 
             //Replace Text
