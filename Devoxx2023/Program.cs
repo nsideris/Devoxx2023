@@ -21,7 +21,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(o =>
 builder.Services.TryAddSingleton<IWorkerServiceBus, WorkerServiceBus>();
 var app = builder.Build();
 
-ApplicationStatus ServiceBusStatus = ApplicationStatus.Inactive;
+ApplicationStatus serviceBusStatus = ApplicationStatus.Inactive;
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -38,7 +38,7 @@ app.MapGet("/GetEnvironment", () => $"You are in Environment: {Environment.GetEn
 app.MapGet("/ServiceBusCount", (
     [FromServices] IWorkerServiceBus serviceBusWorker) => TypedResults.Ok(new
 {
-    Status = ServiceBusStatus,
+    Status = serviceBusStatus,
     Environment = Environment.GetEnvironmentVariable("Role"),
     QueueMessagesProccessed = serviceBusWorker.GetReceivedMessages()
 }));
@@ -65,7 +65,7 @@ app.MapPost("/ApplicationState",
             await serviceBusWorker.StartAsync(ct);
         }
 
-        ServiceBusStatus = applicationState.Status;
+        serviceBusStatus = applicationState.Status;
     }).WithOpenApi();
 
 
