@@ -21,7 +21,10 @@ using LogLevel = Nuke.Common.LogLevel;
     On = new[] {GitHubActionsTrigger.Push},
     FetchDepth = 0,
     ImportSecrets = new[]
-        {"DOCKER_PASSWORD", "AzureUserName", "AzurePassword", "AzureTenantId", "AzureSubscription", "AzureServiceBus"},
+    {
+        "DOCKER_PASSWORD", "AZURE_USER_NAME", "AZURE_PASSWORD", "AZURE_TENANT_ID", "AZURE_SUBSCRIPTION",
+        "AZURE_SERVICE_BUS"
+    },
     InvokedTargets = new[] {nameof(BlueGreenDeploy)})]
 class Build : NukeBuild
 {
@@ -80,12 +83,12 @@ class Build : NukeBuild
     Target LoginAzurePrincipal => _ => _.DependsOn(PushDockerImage).Executes(() =>
     {
         ProcessTasks.StartProcess("az",
-                $"  login --service-principal -u \"{Environment.GetEnvironmentVariable("AzureUserName")}\"  --password \"{Environment.GetEnvironmentVariable("AzurePassword")}\"  --tenant \"{Environment.GetEnvironmentVariable("AzureTenantId")}\" ")
+                $"  login --service-principal -u \"{Environment.GetEnvironmentVariable("AZURE_USER_NAME")}\"  --password \"{Environment.GetEnvironmentVariable("AZURE_PASSWORD")}\"  --tenant \"{Environment.GetEnvironmentVariable("AZURE_TENANT_ID")}\" ")
             .WaitForExit();
         var cluster = "dev";
         var context = "dev";
         var command = "aks get-credentials --overwrite-existing --subscription ";
-        command += $"\"{Environment.GetEnvironmentVariable("AzureSubscription")}\" ";
+        command += $"\"{Environment.GetEnvironmentVariable("AZURE_SUBSCRIPTION")}\" ";
         command += $" --resource-group k8s-{cluster} --name {context}  -a";
 
         ProcessTasks.StartProcess("az", command).WaitForExit();
@@ -116,7 +119,7 @@ class Build : NukeBuild
             {
                 {"TARGET_ROLE", ProductionCandidateEnvironment.ToString().ToLower()},
                 {"VERSION", NerdbankVersioning.NuGetPackageVersion},
-                {"SBCS", Environment.GetEnvironmentVariable("AzureServiceBus")}
+                {"SBCS", Environment.GetEnvironmentVariable("AZURE_SERVICE_BUS")}
             };
 
             //Replace Text
