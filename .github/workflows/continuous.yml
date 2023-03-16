@@ -31,6 +31,8 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
+      - name: Nerdbank.GitVersioning
+        uses: dotnet/nbgv@v0.4.0
       - name: Run './build.cmd BlueGreenDeploy'
         run: ./build.cmd BlueGreenDeploy
         env:
