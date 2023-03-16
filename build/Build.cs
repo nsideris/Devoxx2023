@@ -22,7 +22,11 @@ using LogLevel = Nuke.Common.LogLevel;
     FetchDepth = 0,
     ImportSecrets = new[]
     {
-        "DOCKER_PASSWORD", "AZURE_USER_NAME", "AZURE_PASSWORD", "AZURE_TENANT_ID", "AZURE_SUBSCRIPTION",
+        "DOCKER_PASSWORD",
+        "AZURE_USER_NAME",
+        "AZURE_PASSWORD",
+        "AZURE_TENANT_ID",
+        "AZURE_SUBSCRIPTION",
         "AZURE_SERVICE_BUS"
     },
     InvokedTargets = new[] {nameof(BlueGreenDeploy)})]
