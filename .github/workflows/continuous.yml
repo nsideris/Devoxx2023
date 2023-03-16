@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+          fetch-depth: 0
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v3
         with:
@@ -33,12 +33,10 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Nerdbank.GitVersioning
-        uses: dotnet/nbgv@v0.4.0
       - name: Run './build.cmd BlueGreenDeploy'
         run: ./build.cmd BlueGreenDeploy
         env:
-          DockerPassword: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           AzureUserName: ${{ secrets.AZURE_USER_NAME }}
           AzurePassword: ${{ secrets.AZURE_PASSWORD }}
           AzureTenantId: ${{ secrets.AZURE_TENANT_ID }}

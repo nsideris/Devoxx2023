@@ -19,8 +19,9 @@ using LogLevel = Nuke.Common.LogLevel;
     "continuous",
     GitHubActionsImage.UbuntuLatest,
     On = new[] {GitHubActionsTrigger.Push},
+    FetchDepth = 0,
     ImportSecrets = new[]
-        {"DockerPassword", "AzureUserName", "AzurePassword", "AzureTenantId", "AzureSubscription", "AzureServiceBus"},
+        {"DOCKER_PASSWORD", "AzureUserName", "AzurePassword", "AzureTenantId", "AzureSubscription", "AzureServiceBus"},
     InvokedTargets = new[] {nameof(BlueGreenDeploy)})]
 class Build : NukeBuild
 {
@@ -69,7 +70,7 @@ class Build : NukeBuild
         .Executes(() =>
         {
             DockerTasks.DockerLogin(s =>
-                s.SetUsername("9412036").SetPassword(Environment.GetEnvironmentVariable("DockerPassword")));
+                s.SetUsername("9412036").SetPassword(Environment.GetEnvironmentVariable("DOCKER_PASSWORD")));
             DockerTasks.DockerTag(s => s.SetSourceImage(DockerTagName).SetTargetImage($"9412036/{DockerTagName}"));
             DockerTasks.DockerPush(s => s.SetName($"9412036/{DockerTagName}"));
             Log.Information($"Pushed Docker Image {DockerTagName}");
