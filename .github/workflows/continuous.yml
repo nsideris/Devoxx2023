@@ -37,8 +37,8 @@ jobs:
         run: ./build.cmd BlueGreenDeploy
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          AzureUserName: ${{ secrets.AZURE_USER_NAME }}
-          AzurePassword: ${{ secrets.AZURE_PASSWORD }}
-          AzureTenantId: ${{ secrets.AZURE_TENANT_ID }}
-          AzureSubscription: ${{ secrets.AZURE_SUBSCRIPTION }}
-          AzureServiceBus: ${{ secrets.AZURE_SERVICE_BUS }}
+          AZURE_USER_NAME: ${{ secrets.AZURE_USER_NAME }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
+          AZURE_SERVICE_BUS: ${{ secrets.AZURE_SERVICE_BUS }}
