@@ -49,6 +49,7 @@ app.MapPost("ResetCount", ([FromServices] IWorkerServiceBus serviceBusWorker) =>
     return "Count was reset";
 });
 
+
 app.MapPost("/ApplicationState",
     async (ApplicationState? applicationState, CancellationToken ct, [FromServices] IWorkerServiceBus serviceBusWorker,
         ILoggerFactory loggerFactory) =>
