@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Messaging.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
 
 namespace Devoxx2023;
@@ -21,7 +20,7 @@ public class WorkerServiceBus : IWorkerServiceBus, IAsyncDisposable
         _connectionString = serviceBusOptions.Value.ConnectionString;
     }
 
-    private int ReceivedCount = 0;
+    private int _receivedCount = 0;
 
     // the client that owns the connection and can be used to create senders and receivers
     private ServiceBusClient _client = null!;
@@ -64,19 +63,19 @@ public class WorkerServiceBus : IWorkerServiceBus, IAsyncDisposable
 
     public int GetReceivedMessages()
     {
-        return ReceivedCount;
+        return _receivedCount;
     }
 
     public void ResetCount()
     {
-        ReceivedCount = 0;
+        _receivedCount = 0;
     }
 
     async Task MessageHandler(ProcessMessageEventArgs args)
     {
         string body = args.Message.Body.ToString();
         Console.WriteLine($"Received: {body}");
-        Interlocked.Increment(ref ReceivedCount);
+        Interlocked.Increment(ref _receivedCount);
         await args.CompleteMessageAsync(args.Message);
     }
 
