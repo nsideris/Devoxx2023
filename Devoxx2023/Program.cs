@@ -46,7 +46,7 @@ app.MapGet("/ServiceBusCount", (
 app.MapPost("ResetCount", ([FromServices] IWorkerServiceBus serviceBusWorker) =>
 {
     serviceBusWorker.ResetCount();
-    return "Count was reset.";
+    return "Count was reset .";
 });
 
 
